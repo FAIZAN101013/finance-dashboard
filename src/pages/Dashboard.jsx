@@ -1,13 +1,13 @@
-import React from 'react'
-import Header from '../components/Header'
+import Layout from "../components/Layout";
 
-const Dashboard = () => {
+function Dashboard() {
   return (
-    <div className="p-4">
-        <Header />
-        <h1 className="text-2xl font-bold mt-4">Finance Dashboard</h1>
-    </div>
-  )
+    <Layout>
+      <div className="text-xl font-semibold">
+        Dashboard Content Coming...
+      </div>
+    </Layout>
+  );
 }
 
-export default Dashboard
+export default Dashboard;
