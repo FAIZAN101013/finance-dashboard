@@ -1,11 +1,11 @@
 import React from 'react'
+import Dashboard from './pages/Dashboard'
 
 const App = () => {
   return (
     <>
-     <h1 className="text-3xl font-bold text-blue-500">
-      hi
-    </h1>
+      <Dashboard />
+
     </>
   )
 }
