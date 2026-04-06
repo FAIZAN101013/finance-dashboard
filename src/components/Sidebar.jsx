@@ -5,6 +5,7 @@ import {
   FiLock,
   FiSettings,
   FiHelpCircle,
+  FiX,
 } from "react-icons/fi";
 
 const navItems = [
@@ -39,15 +40,27 @@ const NavButton = ({ id, label, icon: Icon, badge, active, onNavigate }) => (
   </button>
 );
 
-export default function Sidebar({ active = "portfolio", onNavigate }) {
+export default function Sidebar({ active = "portfolio", onNavigate, mobileOpen = false, onClose }) {
   return (
-    <div className="w-56 bg-white h-full flex flex-col justify-between px-3 py-5 border-r border-gray-100">
+    <aside className={`fixed inset-y-0 left-0 z-50 w-72 bg-white h-full flex flex-col justify-between px-3 py-5 border-r border-gray-100 transition-transform duration-300 md:static md:translate-x-0 md:w-56 ${mobileOpen ? "translate-x-0" : "-translate-x-full"} md:flex`}>
 
-      {/* Top */}
-      <div>
-        <h1 className="text-lg font-semibold tracking-tight px-2 mb-6">
-          fin<span className="text-emerald-600">ora</span>
-        </h1>
+      <div className="flex flex-col">
+        <div className="flex items-center justify-between gap-3 mb-6">
+          <h1 className="text-lg font-semibold tracking-tight px-2">
+            fin<span className="text-emerald-600">ora</span>
+          </h1>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="md:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-50 transition-colors"
+              aria-label="Close menu"
+            >
+              <FiX size={18} />
+            </button>
+          )}
+        </div>
+
+        <div className="h-px bg-gray-100 mb-4" />
 
         <nav className="flex flex-col gap-0.5">
           {navItems.map((item) => (
@@ -78,6 +91,6 @@ export default function Sidebar({ active = "portfolio", onNavigate }) {
         </div>
       </div>
 
-    </div>
+    </aside>
   );
 }

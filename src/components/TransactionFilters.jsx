@@ -14,7 +14,7 @@ const activeClass = {
 
 export default function TransactionFilters({ search, setSearch, filter, setFilter }) {
   return (
-    <div className="flex gap-2 mb-4">
+    <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center">
 
       {/* Search */}
       <div className="relative flex-1">

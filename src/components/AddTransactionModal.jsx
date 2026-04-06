@@ -30,7 +30,7 @@ export default function AddTransactionModal({ onAdd, onClose }) {
       className="fixed inset-0 bg-black/30 flex items-center justify-center z-50"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-white rounded-2xl p-6 w-80 shadow-lg">
+      <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4 shadow-lg">
 
         {/* Header */}
         <div className="flex items-center justify-between mb-5">

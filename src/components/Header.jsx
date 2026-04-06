@@ -1,4 +1,4 @@
-import { FiBell } from "react-icons/fi";
+import { FiBell, FiMenu } from "react-icons/fi";
 
 const ROLES = ["Viewer", "Admin"];
 
@@ -7,6 +7,7 @@ export default function Header({
   notifCount = 3,
   role,
   setRole,
+  onToggleSidebar,
 }) {
   const today = new Date().toLocaleDateString("en-US", {
     weekday: "long",
@@ -16,18 +17,25 @@ export default function Header({
   });
 
   return (
-    <div className="flex justify-between items-center bg-white px-6 py-4 border-b border-gray-100 sticky top-0 z-10">
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center justify-between bg-white px-4 py-4 sm:px-6 border-b border-gray-100 sticky top-0 z-10">
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={onToggleSidebar}
+          className="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white p-2 text-gray-500 hover:bg-gray-50 transition-colors md:hidden"
+        >
+          <FiMenu size={18} />
+        </button>
 
-      {/* Left */}
-      <div className="flex flex-col gap-0.5">
-        <h2 className="text-[15px] font-semibold text-gray-900 tracking-tight">
-          {title}
-        </h2>
-        <span className="text-xs text-gray-400">{today}</span>
+        <div className="flex flex-col gap-0.5">
+          <h2 className="text-[15px] font-semibold text-gray-900 tracking-tight">
+            {title}
+          </h2>
+          <span className="text-xs text-gray-400">{today}</span>
+        </div>
       </div>
 
-      {/* Right */}
-      <div className="flex items-center gap-2.5">
+      <div className="flex flex-wrap items-center gap-2.5">
 
         {/* Notification bell */}
         <button

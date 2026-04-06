@@ -46,9 +46,9 @@ export default function TransactionsTable({ role }) {
     <div className="bg-white border border-gray-100 rounded-2xl p-5">
 
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center justify-between mb-4">
         <h3 className="text-[15px] font-semibold text-gray-900">Transactions</h3>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs text-gray-400 bg-gray-100 px-2.5 py-1 rounded-full">
             {filteredData.length} transaction{filteredData.length !== 1 ? "s" : ""}
           </span>
@@ -72,8 +72,9 @@ export default function TransactionsTable({ role }) {
       />
 
       {/* Table */}
-      <table className="w-full text-sm">
-        <thead>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm min-w-[540px]">
+          <thead>
           <tr className="border-b border-gray-100">
             {["Date", "Category", "Amount", "Type", ...(role === "Admin" ? ["Action"] : [])].map((h) => (
               <th
@@ -96,7 +97,8 @@ export default function TransactionsTable({ role }) {
             />
           ))}
         </tbody>
-      </table>
+        </table>
+      </div>
 
       {/* Empty state */}
       {filteredData.length === 0 && (

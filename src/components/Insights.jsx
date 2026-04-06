@@ -68,7 +68,7 @@ export default function Insights() {
       </div>
 
       {/* Cards */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
         {cards.map(({ label, value, sub, progress, barColor, icon: Icon, iconCls, valueCls }) => (
           <div key={label} className="bg-gray-50 rounded-xl p-4 flex flex-col gap-2">
 
