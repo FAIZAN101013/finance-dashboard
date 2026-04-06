@@ -5,13 +5,20 @@ import TransactionFilters from "./TransactionFilters";
 import AddTransactionModal from "./AddTransactionModal";
 import EditTransactionModal from "./EditTransactionModal";
 
+const SORT_OPTIONS = [
+  { value: "date",     label: "Date" },
+  { value: "category", label: "Category" },
+  { value: "amount",   label: "Amount" },
+  { value: "type",     label: "Type" },
+];
+
 export default function TransactionsTable({ role }) {
-  const [search, setSearch]         = useState("");
-  const [filter, setFilter]         = useState("all");
-  const [sortKey, setSortKey]       = useState("date");
+  const [search, setSearch]               = useState("");
+  const [filter, setFilter]               = useState("all");
+  const [sortKey, setSortKey]             = useState("date");
   const [sortDirection, setSortDirection] = useState("desc");
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [editingTx, setEditingTx]   = useState(null); // tx object or null
+  const [showAddModal, setShowAddModal]   = useState(false);
+  const [editingTx, setEditingTx]         = useState(null);
 
   const [data, setData] = useState(() => {
     try {
@@ -45,21 +52,24 @@ export default function TransactionsTable({ role }) {
   });
 
   const sortedData = [...filteredData].sort((a, b) => {
-    let aValue = a[sortKey];
-    let bValue = b[sortKey];
+    const normalize = (val, key) => {
+      if (key === "amount") return Number(val);
+      if (key === "date")   return new Date(val).getTime();
+      return String(val).toLowerCase();
+    };
 
-    if (sortKey === "amount") {
-      aValue = Number(aValue);
-      bValue = Number(bValue);
-    }
-
-    if (sortKey === "date") {
-      aValue = new Date(aValue).getTime();
-      bValue = new Date(bValue).getTime();
-    }
+    const aValue = normalize(a[sortKey], sortKey);
+    const bValue = normalize(b[sortKey], sortKey);
 
     if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
     if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
+
+    if (sortKey !== "date") {
+      const aDate = new Date(a.date).getTime();
+      const bDate = new Date(b.date).getTime();
+      return bDate - aDate;
+    }
+
     return 0;
   });
 
@@ -70,24 +80,53 @@ export default function TransactionsTable({ role }) {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center justify-between mb-4">
         <div className="flex flex-col gap-2 sm:gap-3">
           <h3 className="text-[15px] font-semibold text-gray-900">Transactions</h3>
-          <div className="flex flex-wrap items-center gap-2">
-            <label className="text-xs text-gray-500">Sort by</label>
-            <select
-              value={sortKey}
-              onChange={(e) => setSortKey(e.target.value)}
-              className="text-xs border border-gray-200 rounded-xl px-2 py-1 bg-white focus:outline-none"
-            >
-              <option value="date">Date</option>
-              <option value="category">Category</option>
-              <option value="amount">Amount</option>
-              <option value="type">Type</option>
-            </select>
+
+          {/* Sort controls */}
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-[11px] font-medium text-gray-400 uppercase tracking-wide mr-1">
+              Sort
+            </span>
+
+            {/* Sort key pills */}
+            {SORT_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => setSortKey(opt.value)}
+                className={`text-[11px] font-medium px-2.5 py-1 rounded-full border transition-all duration-150 ${
+                  sortKey === opt.value
+                    ? "bg-gray-900 text-white border-gray-900"
+                    : "bg-white text-gray-500 border-gray-200 hover:border-gray-400 hover:text-gray-700"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+
+            {/* Divider */}
+            <span className="w-px h-4 bg-gray-200 mx-0.5" />
+
+            {/* Asc / Desc toggle */}
             <button
               type="button"
               onClick={() => setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"))}
-              className="text-xs font-medium text-gray-600 border border-gray-200 rounded-xl px-2 py-1 bg-white hover:bg-gray-50"
+              className="flex items-center gap-1 text-[11px] font-medium text-gray-500 border border-gray-200 rounded-full px-2.5 py-1 bg-white hover:border-gray-400 hover:text-gray-700 transition-all duration-150"
             >
-              {sortDirection === "asc" ? "Ascending" : "Descending"}
+              {sortDirection === "asc" ? (
+                <>
+                  <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M6 10V2M3 5l3-3 3 3"/>
+                  </svg>
+                  Asc
+                </>
+              ) : (
+                <>
+                  <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M6 2v8M3 7l3 3 3-3"/>
+                  </svg>
+                  Desc
+                </>
+              )}
             </button>
           </div>
         </div>
@@ -119,28 +158,28 @@ export default function TransactionsTable({ role }) {
       <div className="overflow-x-auto">
         <table className="w-full text-sm min-w-[540px]">
           <thead>
-          <tr className="border-b border-gray-100">
-            {["Date", "Category", "Amount", "Type", ...(role === "Admin" ? ["Action"] : [])].map((h) => (
-              <th
-                key={h}
-                className="pb-2.5 px-3 text-left text-[11px] font-medium text-gray-400 uppercase tracking-wide"
-              >
-                {h}
-              </th>
+            <tr className="border-b border-gray-100">
+              {["Date", "Category", "Amount", "Type", ...(role === "Admin" ? ["Action"] : [])].map((h) => (
+                <th
+                  key={h}
+                  className="pb-2.5 px-3 text-left text-[11px] font-medium text-gray-400 uppercase tracking-wide"
+                >
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {sortedData.map((tx) => (
+              <TransactionRow
+                key={tx.id}
+                tx={tx}
+                role={role}
+                onEdit={() => setEditingTx(tx)}
+                onDelete={handleDelete}
+              />
             ))}
-          </tr>
-        </thead>
-        <tbody>
-          {sortedData.map((tx) => (
-            <TransactionRow
-              key={tx.id}
-              tx={tx}
-              role={role}
-              onEdit={() => setEditingTx(tx)}
-              onDelete={handleDelete}
-            />
-          ))}
-        </tbody>
+          </tbody>
         </table>
       </div>
 
