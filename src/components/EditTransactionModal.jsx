@@ -6,12 +6,12 @@ const TYPES = [
   { value: "income",  label: "+ Income",  active: "bg-emerald-50 text-emerald-700 border-emerald-200" },
 ];
 
-export default function AddTransactionModal({ onAdd, onClose }) {
+export default function EditTransactionModal({ tx, onSave, onClose }) {
   const [form, setForm] = useState({
-    date:     "",
-    category: "",
-    amount:   "",
-    type:     "expense",
+    date:     tx.date     ?? "",
+    category: tx.category ?? "",
+    amount:   tx.amount   ?? "",
+    type:     tx.type     ?? "expense",
   });
 
   const isValid = form.date && form.category.trim() && Number(form.amount) > 0;
@@ -21,7 +21,7 @@ export default function AddTransactionModal({ onAdd, onClose }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!isValid) return;
-    onAdd({ ...form, amount: Number(form.amount) });
+    onSave({ ...tx, ...form, amount: Number(form.amount) });
     onClose();
   };
 
@@ -34,7 +34,7 @@ export default function AddTransactionModal({ onAdd, onClose }) {
 
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
-          <h3 className="text-[15px] font-semibold text-gray-900">Add transaction</h3>
+          <h3 className="text-[15px] font-semibold text-gray-900">Edit transaction</h3>
           <button
             onClick={onClose}
             className="w-7 h-7 flex items-center justify-center rounded-lg border border-gray-200 text-gray-400 hover:bg-gray-50 transition-colors"
@@ -116,12 +116,11 @@ export default function AddTransactionModal({ onAdd, onClose }) {
             disabled={!isValid}
             className="w-full py-2.5 rounded-xl text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-200 disabled:cursor-not-allowed transition-colors mt-1"
           >
-            Add transaction
+            Save changes
           </button>
 
         </form>
 
-        {/* Cancel */}
         <button
           onClick={onClose}
           className="w-full text-center text-xs text-gray-400 hover:text-gray-600 transition-colors mt-3"

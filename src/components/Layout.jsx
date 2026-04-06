@@ -1,27 +1,47 @@
 import { useState } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
+import UnderConstruction from "./UnderConstruction";
 
-export default function Layout({ children, pageTitle }) {
+const PAGE_TITLES = {
+  portfolio: "Portfolio overview",
+  activity:  "Activity",
+  insights:  "Insights",
+  vault:     "Vault",
+  settings:  "Settings",
+  support:   "Support",
+};
+
+export default function Layout({ children }) {
   const [activePage, setActivePage] = useState("portfolio");
+  const [role, setRole]             = useState("Viewer");
 
-  const pageTitles = {
-    portfolio: "Portfolio overview",
-    activity:  "Activity",
-    insights:  "Insights",
-    vault:     "Vault",
-    settings:  "Settings",
-    support:   "Support",
+  const renderContent = () => {
+    // Portfolio is the only live page — children renders it
+    if (activePage === "portfolio") {
+      return typeof children === "function" ? children(role) : children;
+    }
+
+    // In Layout.jsx
+return <UnderConstruction title={PAGE_TITLES[activePage]} pageId={activePage} />;
   };
 
   return (
-    <div className="flex h-screen bg-[#f5f4f0]">
+    <div className="flex h-screen bg-gray-50">
+
       <Sidebar active={activePage} onNavigate={setActivePage} />
+
       <div className="flex flex-col flex-1 overflow-hidden">
-        <Header title={pageTitle ?? pageTitles[activePage]} />
-        <main className="flex-1 overflow-y-auto p-6 space-y-4">
-          {children}
+        <Header
+          title={PAGE_TITLES[activePage]}
+          role={role}
+          setRole={setRole}
+        />
+
+        <main className="flex-1 overflow-y-auto p-6">
+          {renderContent()}
         </main>
+
       </div>
     </div>
   );

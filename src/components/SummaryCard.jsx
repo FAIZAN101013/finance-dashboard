@@ -21,7 +21,7 @@ export default function SummaryCard({ title, amount, type = "balance", trend, cu
       </div>
 
       <p className="text-2xl font-semibold tracking-tight font-mono">
-        {currency}{amount}
+        {amount}
       </p>
 
       {trend && (
